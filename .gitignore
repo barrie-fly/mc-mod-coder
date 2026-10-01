@@ -1,0 +1,17 @@
+# .NET 构建产物
+[Bb]in/
+[Oo]bj/
+[Oo]ut/
+*.user
+*.suo
+.vs/
+
+# 打包发布产物（pack.ps1 生成）
+publish/
+
+# 本地会话与工具数据
+.workbuddy/
+
+# 临时文件
+*.tmp
+*.log

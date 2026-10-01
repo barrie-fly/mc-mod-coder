@@ -1,0 +1,57 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!--
+      草原绿（主世界主题）
+      暗绿黑底 + 草方块绿强调，向 Minecraft 主世界致意。植被色阶贯穿面板与边框，
+      强调色即草方块的经典绿。
+    -->
+
+    <!-- 全局画刷 -->
+    <SolidColorBrush x:Key="BgBrush"        Color="#121710"/>
+    <SolidColorBrush x:Key="PanelBrush"     Color="#182015"/>
+    <SolidColorBrush x:Key="Panel2Brush"    Color="#1E2819"/>
+    <SolidColorBrush x:Key="BorderBrush"    Color="#2C3A26"/>
+    <SolidColorBrush x:Key="TextBrush"      Color="#E4ECDF"/>
+    <SolidColorBrush x:Key="TextDimBrush"   Color="#97A88E"/>
+    <SolidColorBrush x:Key="AccentBrush"    Color="#7CC64A"/>
+    <SolidColorBrush x:Key="AccentDimBrush" Color="#2E521F"/>
+    <SolidColorBrush x:Key="GreenBrush"     Color="#62D97A"/>
+    <SolidColorBrush x:Key="RedBrush"       Color="#F26D6D"/>
+    <SolidColorBrush x:Key="YellowBrush"    Color="#E8C468"/>
+    <SolidColorBrush x:Key="HoverBrush"     Color="#232E1D"/>
+
+    <SolidColorBrush x:Key="SlotBrush"      Color="#8B8B8B"/>
+    <SolidColorBrush x:Key="SlotDarkBrush"  Color="#2C3526"/>
+    <SolidColorBrush x:Key="SlotLightBrush" Color="#FFFFFF"/>
+
+    <!-- 补充画刷 -->
+    <SolidColorBrush x:Key="InputBgBrush"   Color="#0E120C"/>
+    <SolidColorBrush x:Key="AccentHoverBrush"  Color="#95D966"/>
+    <SolidColorBrush x:Key="AccentPressedBrush" Color="#63A83A"/>
+    <SolidColorBrush x:Key="BtnPressedBrush"   Color="#0D120B"/>
+    <SolidColorBrush x:Key="ThumbBrush"     Color="#36452D"/>
+    <SolidColorBrush x:Key="ThumbHoverBrush" Color="#445939"/>
+    <SolidColorBrush x:Key="SubtleBrush"    Color="#4C6040"/>
+    <SolidColorBrush x:Key="AccentCheckBgBrush" Color="#223B16"/>
+
+    <!-- 画布 / 视口深底 -->
+    <SolidColorBrush x:Key="DeepBgBrush"    Color="#0C100A"/>
+    <SolidColorBrush x:Key="VoidBrush"      Color="#090C07"/>
+    <SolidColorBrush x:Key="CodeBgBrush"    Color="#0F140C"/>
+    <SolidColorBrush x:Key="LogBgBrush"     Color="#0B0F09"/>
+    <SolidColorBrush x:Key="LogTextBrush"   Color="#A8E090"/>
+    <SolidColorBrush x:Key="OverlayBrush"   Color="#E6121710"/>
+    <SolidColorBrush x:Key="PopupBgBrush"   Color="#192116"/>
+    <SolidColorBrush x:Key="PanelGlassBrush"  Color="#CC182015"/>
+    <SolidColorBrush x:Key="PanelStrongBrush" Color="#E6182015"/>
+
+    <!-- 派生状态画刷（各主题单独校准） -->
+    <SolidColorBrush x:Key="AccentBorderBrush"  Color="#4A7A33"/>
+    <SolidColorBrush x:Key="GridLineBrush"      Color="#26311F"/>
+    <SolidColorBrush x:Key="RowAltBrush"        Color="#161D12"/>
+    <SolidColorBrush x:Key="DangerHoverBrush"   Color="#F68A8A"/>
+    <SolidColorBrush x:Key="DangerPressedBrush" Color="#D95757"/>
+    <SolidColorBrush x:Key="SuccessHoverBrush"  Color="#7DE48F"/>
+    <SolidColorBrush x:Key="SuccessPressedBrush" Color="#4DB865"/>
+</ResourceDictionary>

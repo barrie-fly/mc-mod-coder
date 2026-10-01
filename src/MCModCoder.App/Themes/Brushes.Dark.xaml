@@ -1,0 +1,57 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!--
+      深空黑（默认主题）
+      石墨色阶 + 电光蓝强调。冷峻的开发者工具气质，所有画刷 key 与其他色板保持一一对应，
+      由 ThemeManager 在运行时整体替换实现主题热切换。
+    -->
+
+    <!-- 全局画刷 -->
+    <SolidColorBrush x:Key="BgBrush"        Color="#17181B"/>
+    <SolidColorBrush x:Key="PanelBrush"     Color="#1F2126"/>
+    <SolidColorBrush x:Key="Panel2Brush"    Color="#26282E"/>
+    <SolidColorBrush x:Key="BorderBrush"    Color="#33363D"/>
+    <SolidColorBrush x:Key="TextBrush"      Color="#E4E6EB"/>
+    <SolidColorBrush x:Key="TextDimBrush"   Color="#9AA0AB"/>
+    <SolidColorBrush x:Key="AccentBrush"    Color="#4C8DFF"/>
+    <SolidColorBrush x:Key="AccentDimBrush" Color="#2A4A80"/>
+    <SolidColorBrush x:Key="GreenBrush"     Color="#4CC38A"/>
+    <SolidColorBrush x:Key="RedBrush"       Color="#F26D6D"/>
+    <SolidColorBrush x:Key="YellowBrush"    Color="#E8C468"/>
+    <SolidColorBrush x:Key="HoverBrush"     Color="#2E3138"/>
+
+    <SolidColorBrush x:Key="SlotBrush"      Color="#8B8B8B"/>
+    <SolidColorBrush x:Key="SlotDarkBrush"  Color="#373737"/>
+    <SolidColorBrush x:Key="SlotLightBrush" Color="#FFFFFF"/>
+
+    <!-- 补充画刷 -->
+    <SolidColorBrush x:Key="InputBgBrush"   Color="#141519"/>
+    <SolidColorBrush x:Key="AccentHoverBrush"  Color="#6BA0FF"/>
+    <SolidColorBrush x:Key="AccentPressedBrush" Color="#3F76D9"/>
+    <SolidColorBrush x:Key="BtnPressedBrush"   Color="#15171B"/>
+    <SolidColorBrush x:Key="ThumbBrush"     Color="#3D414A"/>
+    <SolidColorBrush x:Key="ThumbHoverBrush" Color="#4A4F59"/>
+    <SolidColorBrush x:Key="SubtleBrush"    Color="#4A4E58"/>
+    <SolidColorBrush x:Key="AccentCheckBgBrush" Color="#1D3054"/>
+
+    <!-- 画布 / 视口深底 -->
+    <SolidColorBrush x:Key="DeepBgBrush"    Color="#101216"/>
+    <SolidColorBrush x:Key="VoidBrush"      Color="#0C0E12"/>
+    <SolidColorBrush x:Key="CodeBgBrush"    Color="#121317"/>
+    <SolidColorBrush x:Key="LogBgBrush"     Color="#0F1013"/>
+    <SolidColorBrush x:Key="LogTextBrush"   Color="#9ECBFF"/>
+    <SolidColorBrush x:Key="OverlayBrush"   Color="#E617181B"/>
+    <SolidColorBrush x:Key="PopupBgBrush"   Color="#20222A"/>
+    <SolidColorBrush x:Key="PanelGlassBrush"  Color="#CC1F2126"/>
+    <SolidColorBrush x:Key="PanelStrongBrush" Color="#E61F2126"/>
+
+    <!-- 派生状态画刷（各主题单独校准） -->
+    <SolidColorBrush x:Key="AccentBorderBrush"  Color="#33517F"/>
+    <SolidColorBrush x:Key="GridLineBrush"      Color="#2A2D33"/>
+    <SolidColorBrush x:Key="RowAltBrush"        Color="#1B1D21"/>
+    <SolidColorBrush x:Key="DangerHoverBrush"   Color="#F68A8A"/>
+    <SolidColorBrush x:Key="DangerPressedBrush" Color="#D95757"/>
+    <SolidColorBrush x:Key="SuccessHoverBrush"  Color="#66D6A0"/>
+    <SolidColorBrush x:Key="SuccessPressedBrush" Color="#3BA872"/>
+</ResourceDictionary>

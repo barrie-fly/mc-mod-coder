@@ -1,0 +1,188 @@
+<UserControl x:Class="MCModCoder.Modules.RenderView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Grid Margin="14">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="300"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- 左：参数面板 -->
+        <Border Grid.Column="0" Background="{DynamicResource PanelBrush}" BorderBrush="{DynamicResource BorderBrush}"
+                BorderThickness="1" CornerRadius="8" Padding="10" Margin="0,0,10,0">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <StackPanel Orientation="Horizontal">
+                    <RadioButton x:Name="TabParticles" Content="粒子" IsChecked="True" Checked="Tab_Changed" Style="{StaticResource TabRadio}"/>
+                    <RadioButton x:Name="TabMaterial" Content="材质" Margin="6,0,0,0" Checked="Tab_Changed" Style="{StaticResource TabRadio}"/>
+                    <RadioButton x:Name="TabAnim" Content="动画" Margin="6,0,0,0" Checked="Tab_Changed" Style="{StaticResource TabRadio}"/>
+                </StackPanel>
+                <ScrollViewer Grid.Row="1" Margin="0,10,0,0" VerticalScrollBarVisibility="Auto">
+                    <Grid>
+                        <!-- 粒子发射器 -->
+                        <StackPanel x:Name="ParticlePanel">
+                            <TextBlock Text="粒子发射器" FontWeight="SemiBold"/>
+                            <TextBlock Text="名称" Style="{StaticResource DimText}" Margin="0,6,0,2"/>
+                            <TextBox x:Name="PName" Text="MyEffect" TextChanged="P_Changed"/>
+                            <TextBlock Text="发射速率（个/秒）" Style="{StaticResource DimText}" Margin="0,8,0,2"/>
+                            <Slider x:Name="Rate" Minimum="0" Maximum="200" Value="40" ValueChanged="P_Changed"/>
+                            <TextBlock Text="生命周期（秒）" Style="{StaticResource DimText}" Margin="0,6,0,2"/>
+                            <Slider x:Name="Life" Minimum="0.2" Maximum="5" Value="1.2" ValueChanged="P_Changed"/>
+                            <TextBlock Text="初速度" Style="{StaticResource DimText}" Margin="0,6,0,2"/>
+                            <Slider x:Name="SpeedS" Minimum="0" Maximum="5" Value="1" ValueChanged="P_Changed"/>
+                            <TextBlock Text="重力" Style="{StaticResource DimText}" Margin="0,6,0,2"/>
+                            <Slider x:Name="Grav" Minimum="0" Maximum="2" Value="0.4" ValueChanged="P_Changed"/>
+                            <TextBlock Text="扩散角（0-1）" Style="{StaticResource DimText}" Margin="0,6,0,2"/>
+                            <Slider x:Name="SpreadS" Minimum="0" Maximum="1" Value="0.6" ValueChanged="P_Changed"/>
+                            <TextBlock Text="发射形状" Style="{StaticResource DimText}" Margin="0,8,0,2"/>
+                            <StackPanel Orientation="Horizontal">
+                                <RadioButton x:Name="shapeCone" Content="锥形" Tag="cone" GroupName="pshape" IsChecked="True"
+                                             Checked="P_Changed" Style="{StaticResource TabRadio}" FontSize="12"/>
+                                <RadioButton x:Name="shapePoint" Content="点源" Tag="point" GroupName="pshape" Margin="6,0,0,0"
+                                             Checked="P_Changed" Style="{StaticResource TabRadio}" FontSize="12"/>
+                                <RadioButton x:Name="shapeRing" Content="环形" Tag="ring" GroupName="pshape" Margin="6,0,0,0"
+                                             Checked="P_Changed" Style="{StaticResource TabRadio}" FontSize="12"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                                <TextBlock Text="起始色" Style="{StaticResource DimText}" VerticalAlignment="Center"/>
+                                <TextBox x:Name="CFrom" Width="76" Margin="8,0,0,0" Text="#FFE066" TextChanged="P_Changed"/>
+                                <TextBlock Text="结束色" Style="{StaticResource DimText}" Margin="12,0,0,0" VerticalAlignment="Center"/>
+                                <TextBox x:Name="CTo" Width="76" Margin="8,0,0,0" Text="#FF5722" TextChanged="P_Changed"/>
+                            </StackPanel>
+                            <TextBlock Text="起始尺寸（px）" Style="{StaticResource DimText}" Margin="0,8,0,2"/>
+                            <Slider x:Name="SzA" Minimum="1" Maximum="24" Value="4" ValueChanged="P_Changed"/>
+                            <TextBlock Text="结束尺寸（px）" Style="{StaticResource DimText}" Margin="0,6,0,2"/>
+                            <Slider x:Name="SzB" Minimum="0" Maximum="12" Value="0.5" ValueChanged="P_Changed"/>
+                            <CheckBox x:Name="Additive" Content="加法混合（火焰/魔力发光）" IsChecked="True"
+                                      Margin="0,10,0,0" Checked="P_Changed" Unchecked="P_Changed"/>
+                            <TextBlock Text="最大粒子数" Style="{StaticResource DimText}" Margin="0,8,0,2"/>
+                            <Slider x:Name="MaxC" Minimum="100" Maximum="2000" Value="600" ValueChanged="P_Changed"/>
+
+                            <Border Height="1" Background="{DynamicResource BorderBrush}" Margin="0,16,0,10"/>
+                            <UniformGrid Columns="2">
+                                <Button Content="保存效果" Style="{StaticResource ToolButton}" Margin="0,0,4,6" Click="SaveEff_Click"/>
+                                <Button Content="加载效果" Style="{StaticResource ToolButton}" Margin="4,0,0,6" Click="LoadEff_Click"/>
+                                <Button Content="复制 JSON" Style="{StaticResource ToolButton}" Margin="0,0,4,0" Click="CopyJson_Click"/>
+                                <Button Content="打开效果目录" Style="{StaticResource ToolButton}" Margin="4,0,0,0" Click="OpenDir_Click"/>
+                            </UniformGrid>
+                        </StackPanel>
+
+                        <!-- 材质参数 -->
+                        <StackPanel x:Name="MaterialPanel" Visibility="Collapsed">
+                            <TextBlock Text="材质参数" FontWeight="SemiBold"/>
+                            <TextBlock Text="名称" Style="{StaticResource DimText}" Margin="0,6,0,2"/>
+                            <TextBox x:Name="MName" Text="MyMaterial" TextChanged="M_Changed"/>
+                            <TextBlock Text="金属度" Style="{StaticResource DimText}" Margin="0,8,0,2"/>
+                            <Slider x:Name="Metal" Minimum="0" Maximum="1" Value="0" ValueChanged="M_Changed"/>
+                            <TextBlock Text="粗糙度" Style="{StaticResource DimText}" Margin="0,6,0,2"/>
+                            <Slider x:Name="Rough" Minimum="0.05" Maximum="1" Value="0.8" ValueChanged="M_Changed"/>
+                            <TextBlock Text="自发光" Style="{StaticResource DimText}" Margin="0,6,0,2"/>
+                            <Slider x:Name="Emis" Minimum="0" Maximum="1" Value="0" ValueChanged="M_Changed"/>
+                            <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                                <TextBlock Text="基础色" Style="{StaticResource DimText}" VerticalAlignment="Center"/>
+                                <TextBox x:Name="BaseCol" Width="90" Margin="8,0,0,0" Text="#C8C8C8" TextChanged="M_Changed"/>
+                            </StackPanel>
+                            <TextBlock Text="渲染层（Render Type）" Style="{StaticResource DimText}" Margin="0,10,0,2"/>
+                            <StackPanel Orientation="Horizontal">
+                                <RadioButton x:Name="layerSolid" Content="solid" Tag="solid" GroupName="rlayer" IsChecked="True"
+                                             Checked="M_Changed" Style="{StaticResource TabRadio}" FontSize="12"/>
+                                <RadioButton x:Name="layerCutout" Content="cutout" Tag="cutout" GroupName="rlayer" Margin="6,0,0,0"
+                                             Checked="M_Changed" Style="{StaticResource TabRadio}" FontSize="12"/>
+                                <RadioButton x:Name="layerTrans" Content="translucent" Tag="translucent" GroupName="rlayer" Margin="6,0,0,0"
+                                             Checked="M_Changed" Style="{StaticResource TabRadio}" FontSize="12"/>
+                            </StackPanel>
+                            <CheckBox x:Name="NMap" Content="使用法线贴图" IsChecked="True" Margin="0,10,0,0"
+                                      Checked="M_Changed" Unchecked="M_Changed"/>
+                            <CheckBox x:Name="SMap" Content="使用高光贴图" Margin="0,6,0,0"
+                                      Checked="M_Changed" Unchecked="M_Changed"/>
+                            <Border Height="1" Background="{DynamicResource BorderBrush}" Margin="0,14,0,10"/>
+                            <TextBlock Style="{StaticResource DimText}" TextWrapping="Wrap"
+                                       Text="球体预览位于画面右下角：高光锐度 = 1 - 粗糙度，金属度增强反射，自发光产生辉光。参数改动实时反映。"/>
+                        </StackPanel>
+
+                        <!-- 动画曲线 -->
+                        <StackPanel x:Name="AnimPanel" Visibility="Collapsed">
+                            <TextBlock Text="动画曲线" FontWeight="SemiBold"/>
+                            <TextBlock Text="名称" Style="{StaticResource DimText}" Margin="0,6,0,2"/>
+                            <TextBox x:Name="AName" Text="SizeOverLife" TextChanged="A_Changed"/>
+                            <CheckBox x:Name="UseSizeCurve" Content="粒子尺寸随生命周期曲线变化" Margin="0,8,0,6"
+                                      Checked="A_Changed" Unchecked="A_Changed"/>
+                            <Canvas x:Name="CurveCanvas" Width="250" Height="140" Background="{DynamicResource Panel2Brush}"
+                                    HorizontalAlignment="Left"/>
+                            <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                                <TextBlock Text="采样 t =" Style="{StaticResource DimText}" VerticalAlignment="Center"/>
+                                <Slider x:Name="SampleSlider" Width="120" Minimum="0" Maximum="1" Value="0.5"
+                                        ValueChanged="Sample_Changed" VerticalAlignment="Center" Margin="6,0,0,0"/>
+                                <TextBlock x:Name="SampleVal" Text="0.80" Style="{StaticResource DimText}" Margin="10,0,0,0"/>
+                            </StackPanel>
+                            <TextBlock Text="关键帧（t = 时间，v = 取值，均 0~1）" Style="{StaticResource DimText}" Margin="0,12,0,4"/>
+                            <ListBox x:Name="KeyList" Height="110" SelectionChanged="KeyList_SelectionChanged"/>
+                            <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                                <TextBlock Text="t =" Style="{StaticResource DimText}" VerticalAlignment="Center"/>
+                                <TextBox x:Name="KTime" Width="46" Margin="4,0,0,0" Text="0.5"/>
+                                <TextBlock Text="v =" Style="{StaticResource DimText}" Margin="10,0,0,0" VerticalAlignment="Center"/>
+                                <TextBox x:Name="KValue" Width="46" Margin="4,0,0,0" Text="0.5"/>
+                                <Button Content="＋ 添加" Style="{StaticResource ToolButton}" Margin="10,0,0,0" Click="AddKey_Click"/>
+                                <Button Content="删除" Style="{StaticResource ToolButton}" Margin="6,0,0,0" Click="DelKey_Click"/>
+                            </StackPanel>
+                            <TextBlock Style="{StaticResource DimText}" Margin="0,10,0,0" TextWrapping="Wrap"
+                                       Text="点击列表项可回填数值。曲线启用后同时驱动预览中的粒子尺寸。"/>
+                        </StackPanel>
+                    </Grid>
+                </ScrollViewer>
+            </Grid>
+        </Border>
+
+        <!-- 右：实时预览 -->
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Border Grid.Row="0" Background="{DynamicResource PanelBrush}" BorderBrush="{DynamicResource BorderBrush}"
+                    BorderThickness="1" CornerRadius="8" Padding="10,6">
+                <DockPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Button x:Name="PlayBtn" Content="⏸ 暂停" Style="{StaticResource ToolButton}" Click="Play_Click"/>
+                        <Button Content="↺ 重置" Style="{StaticResource ToolButton}" Margin="6,0,0,0" Click="Reset_Click"/>
+                        <Button x:Name="PerfBtn" Content="⚡ 性能建议" Style="{StaticResource ToolButton}" Margin="6,0,0,0" Click="Perf_Click"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                        <TextBlock x:Name="FpsText" Text="FPS：--" Style="{StaticResource DimText}" VerticalAlignment="Center"/>
+                        <TextBlock x:Name="CountText" Text="粒子数：0" Style="{StaticResource DimText}" Margin="16,0,0,0" VerticalAlignment="Center"/>
+                        <TextBlock x:Name="MemText" Text="内存：--" Style="{StaticResource DimText}" Margin="16,0,0,0" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </DockPanel>
+            </Border>
+            <Border Grid.Row="1" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"
+                    CornerRadius="8" Margin="0,10,0,0" ClipToBounds="True" Background="{DynamicResource VoidBrush}">
+                <Grid>
+                    <Canvas x:Name="SimCanvas"/>
+                    <!-- 材质球预览 -->
+                    <Border HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="12"
+                            Background="{DynamicResource PanelGlassBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"
+                            CornerRadius="8" Padding="10" IsHitTestVisible="False">
+                        <StackPanel>
+                            <Grid Width="132" Height="132">
+                                <Ellipse x:Name="SphGlow" Width="132" Height="132"/>
+                                <Ellipse x:Name="SphMain" Width="116" Height="116"/>
+                            </Grid>
+                            <TextBlock x:Name="MatLabel" Style="{StaticResource DimText}" FontSize="11"
+                                       TextAlignment="Center" Margin="0,6,0,0" Text="--"/>
+                        </StackPanel>
+                    </Border>
+                    <!-- 性能建议 -->
+                    <Border x:Name="PerfPanel" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="12"
+                            Background="{DynamicResource PanelStrongBrush}" BorderBrush="{DynamicResource YellowBrush}" BorderThickness="1"
+                            CornerRadius="8" Padding="12" Visibility="Collapsed">
+                        <TextBlock x:Name="PerfText" TextWrapping="Wrap" FontSize="12" MaxWidth="340" Text=""/>
+                    </Border>
+                </Grid>
+            </Border>
+        </Grid>
+    </Grid>
+</UserControl>

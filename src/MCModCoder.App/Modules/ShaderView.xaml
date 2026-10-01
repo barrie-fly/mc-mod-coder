@@ -1,0 +1,117 @@
+<UserControl x:Class="MCModCoder.Modules.ShaderView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Grid Margin="14">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="290"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- 左：参数 -->
+        <Border Grid.Column="0" Background="{DynamicResource PanelBrush}" BorderBrush="{DynamicResource BorderBrush}"
+                BorderThickness="1" CornerRadius="8" Padding="10" Margin="0,0,10,0">
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <StackPanel>
+                    <TextBlock Text="光源设置" FontWeight="SemiBold"/>
+                    <DockPanel Margin="0,6,0,2">
+                        <TextBlock Text="太阳高度角" Style="{StaticResource DimText}"/>
+                        <TextBlock Text="{Binding Value, ElementName=SunAngle, StringFormat={}{0:F0}°}" Style="{StaticResource DimText}" HorizontalAlignment="Right"/>
+                    </DockPanel>
+                    <Slider x:Name="SunAngle" Minimum="0" Maximum="90" Value="45" ValueChanged="Param_Changed"/>
+                    <DockPanel Margin="0,6,0,2">
+                        <TextBlock Text="太阳方位角" Style="{StaticResource DimText}"/>
+                        <TextBlock Text="{Binding Value, ElementName=SunAzimuth, StringFormat={}{0:F0}°}" Style="{StaticResource DimText}" HorizontalAlignment="Right"/>
+                    </DockPanel>
+                    <Slider x:Name="SunAzimuth" Minimum="0" Maximum="360" Value="135" ValueChanged="Param_Changed"/>
+                    <DockPanel Margin="0,6,0,2">
+                        <TextBlock Text="光照强度" Style="{StaticResource DimText}"/>
+                        <TextBlock Text="{Binding Value, ElementName=SunIntensity, StringFormat={}{0:F2}}" Style="{StaticResource DimText}" HorizontalAlignment="Right"/>
+                    </DockPanel>
+                    <Slider x:Name="SunIntensity" Minimum="0" Maximum="2" Value="1" ValueChanged="Param_Changed"/>
+                    <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
+                        <TextBlock Text="太阳颜色" Style="{StaticResource DimText}" VerticalAlignment="Center"/>
+                        <TextBox x:Name="SunColor" Width="90" Margin="8,0,0,0" Text="#FFF3D6" TextChanged="Color_Changed"
+                                 ToolTip="十六进制颜色，格式 #RRGGBB 或 #AARRGGBB"/>
+                    </StackPanel>
+
+                    <TextBlock Text="阴影效果" FontWeight="SemiBold" Margin="0,14,0,4"/>
+                    <DockPanel Margin="0,0,0,2">
+                        <TextBlock Text="阴影强度" Style="{StaticResource DimText}"/>
+                        <TextBlock Text="{Binding Value, ElementName=ShadowStrength, StringFormat={}{0:F2}}" Style="{StaticResource DimText}" HorizontalAlignment="Right"/>
+                    </DockPanel>
+                    <Slider x:Name="ShadowStrength" Minimum="0" Maximum="1" Value="0.6" ValueChanged="Param_Changed"/>
+                    <DockPanel Margin="0,6,0,2">
+                        <TextBlock Text="阴影柔化" Style="{StaticResource DimText}"/>
+                        <TextBlock Text="{Binding Value, ElementName=ShadowSoftness, StringFormat={}{0:F2}}" Style="{StaticResource DimText}" HorizontalAlignment="Right"/>
+                    </DockPanel>
+                    <Slider x:Name="ShadowSoftness" Minimum="0" Maximum="1" Value="0.5"/>
+
+                    <TextBlock Text="环境光" FontWeight="SemiBold" Margin="0,14,0,4"/>
+                    <DockPanel Margin="0,0,0,2">
+                        <TextBlock Text="环境光强度" Style="{StaticResource DimText}"/>
+                        <TextBlock Text="{Binding Value, ElementName=AmbientIntensity, StringFormat={}{0:F2}}" Style="{StaticResource DimText}" HorizontalAlignment="Right"/>
+                    </DockPanel>
+                    <Slider x:Name="AmbientIntensity" Minimum="0" Maximum="1" Value="0.35" ValueChanged="Param_Changed"/>
+                    <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
+                        <TextBlock Text="环境光颜色" Style="{StaticResource DimText}" VerticalAlignment="Center"/>
+                        <TextBox x:Name="AmbientColor" Width="90" Margin="8,0,0,0" Text="#8FA6C8" TextChanged="Color_Changed"
+                                 ToolTip="十六进制颜色，格式 #RRGGBB 或 #AARRGGBB"/>
+                    </StackPanel>
+
+                    <TextBlock Text="雾效" FontWeight="SemiBold" Margin="0,14,0,4"/>
+                    <DockPanel Margin="0,0,0,2">
+                        <TextBlock Text="雾密度" Style="{StaticResource DimText}"/>
+                        <TextBlock Text="{Binding Value, ElementName=FogDensity, StringFormat={}{0:F3}}" Style="{StaticResource DimText}" HorizontalAlignment="Right"/>
+                    </DockPanel>
+                    <Slider x:Name="FogDensity" Minimum="0" Maximum="0.08" Value="0.015" ValueChanged="Param_Changed"/>
+                    <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
+                        <TextBlock Text="雾颜色" Style="{StaticResource DimText}" VerticalAlignment="Center"/>
+                        <TextBox x:Name="FogColor" Width="90" Margin="8,0,0,0" Text="#A8C4E0" TextChanged="Color_Changed"
+                                 ToolTip="十六进制颜色，格式 #RRGGBB 或 #AARRGGBB"/>
+                    </StackPanel>
+                    <CheckBox x:Name="Volumetric" Content="体积光（God Rays 预览提示）" Margin="0,8,0,0"/>
+                    <CheckBox x:Name="Tonemap" Content="ACES 色调映射" IsChecked="True"/>
+
+                    <DockPanel Margin="0,12,0,2">
+                        <TextBlock Text="自发光增益（emissive）" Style="{StaticResource DimText}"/>
+                        <TextBlock Text="{Binding Value, ElementName=Emissive, StringFormat={}{0:F2}}" Style="{StaticResource DimText}" HorizontalAlignment="Right"/>
+                    </DockPanel>
+                    <Slider x:Name="Emissive" Minimum="0" Maximum="3" Value="1" ValueChanged="Param_Changed"/>
+
+                    <Button Content="导出 GLSL 配置…" Margin="0,16,0,0"
+                            Style="{StaticResource AccentButton}" Click="ExportGlsl_Click"/>
+                    <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                        <Button Content="保存配置" Style="{StaticResource ToolButton}" Click="SaveCfg_Click"/>
+                        <Button Content="加载配置" Style="{StaticResource ToolButton}" Margin="6,0,0,0" Click="LoadCfg_Click"/>
+                    </StackPanel>
+                </StackPanel>
+            </ScrollViewer>
+        </Border>
+
+        <!-- 右：实时预览 + 对比 -->
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Border Grid.Row="0" Background="{DynamicResource PanelBrush}" BorderBrush="{DynamicResource BorderBrush}"
+                    BorderThickness="1" CornerRadius="8" Padding="10,6">
+                <StackPanel Orientation="Horizontal">
+                    <Button Content="📷 快照 A" Style="{StaticResource ToolButton}" Click="SnapA_Click"/>
+                    <Image x:Name="SnapA" Width="64" Height="44" Margin="6,0,0,0"/>
+                    <Button Content="📷 快照 B" Style="{StaticResource ToolButton}" Margin="16,0,0,0" Click="SnapB_Click"/>
+                    <Image x:Name="SnapB" Width="64" Height="44" Margin="6,0,0,0"/>
+                    <TextBlock Text="← 调整参数前后各拍一张，直观对比光影差异" Style="{StaticResource DimText}" Margin="12,0,0,0"
+                               VerticalAlignment="Center"/>
+                </StackPanel>
+            </Border>
+            <Border Grid.Row="1" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"
+                    CornerRadius="8" Margin="0,10,0,0" ClipToBounds="True" Background="{DynamicResource VoidBrush}">
+                <Grid>
+                    <Viewport3D x:Name="Viewport"/>
+                    <Border x:Name="FogOverlay" IsHitTestVisible="False" Background="Transparent"/>
+                </Grid>
+            </Border>
+        </Grid>
+    </Grid>
+</UserControl>

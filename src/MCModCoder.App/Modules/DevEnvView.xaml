@@ -1,0 +1,108 @@
+<UserControl x:Class="MCModCoder.Modules.DevEnvView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <TabControl Margin="14">
+        <!-- ============ 新建项目向导 ============ -->
+        <TabItem Header="新建项目向导">
+            <Border Background="{DynamicResource PanelBrush}" BorderBrush="{DynamicResource BorderBrush}"
+                    BorderThickness="1" CornerRadius="8" Padding="20" Margin="0,10,0,0">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel MaxWidth="640" HorizontalAlignment="Left">
+                        <TextBlock Text="创建 Minecraft 模组工程" FontSize="18" FontWeight="Bold"/>
+                        <TextBlock Style="{StaticResource DimText}" Margin="0,4,0,14"
+                                   Text="自动生成 build.gradle / mods.toml / fabric.mod.json 等完整脚手架，支持 1.12.2 ~ 1.20+ 与主流加载器。"/>
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="150"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="40"/><RowDefinition Height="40"/><RowDefinition Height="40"/>
+                                <RowDefinition Height="40"/><RowDefinition Height="40"/><RowDefinition Height="40"/>
+                                <RowDefinition Height="70"/><RowDefinition Height="50"/>
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Text="项目名称" VerticalAlignment="Center" Margin="0,0,14,0"/>
+                            <TextBox x:Name="WizName" Grid.Column="1" Text="MyMod"/>
+
+                            <TextBlock Grid.Row="1" Text="Mod ID" VerticalAlignment="Center" Margin="0,0,14,0"/>
+                            <TextBox x:Name="WizModId" Grid.Row="1" Grid.Column="1" Text="mymod"/>
+
+                            <TextBlock Grid.Row="2" Text="Minecraft 版本" VerticalAlignment="Center" Margin="0,0,14,0"/>
+                            <ComboBox x:Name="WizVersion" Grid.Row="2" Grid.Column="1" Width="180" HorizontalAlignment="Left"
+                                      SelectionChanged="WizVersion_Changed"/>
+
+                            <TextBlock Grid.Row="3" Text="模组加载器" VerticalAlignment="Center" Margin="0,0,14,0"/>
+                            <StackPanel Grid.Row="3" Grid.Column="1" Orientation="Horizontal">
+                                <ComboBox x:Name="WizLoader" Width="180"/>
+                                <TextBlock x:Name="WizJavaLabel" Text="Java: 17" Margin="12,0,0,0" VerticalAlignment="Center"
+                                           Foreground="{DynamicResource AccentBrush}"/>
+                            </StackPanel>
+
+                            <TextBlock Grid.Row="4" Text="Java 包名" VerticalAlignment="Center" Margin="0,0,14,0"/>
+                            <TextBox x:Name="WizPackage" Grid.Row="4" Grid.Column="1" Text="com.example.mymod"/>
+
+                            <TextBlock Grid.Row="5" Text="作者" VerticalAlignment="Center" Margin="0,0,14,0"/>
+                            <TextBox x:Name="WizAuthor" Grid.Row="5" Grid.Column="1" Text=""/>
+
+                            <TextBlock Grid.Row="6" Text="描述" VerticalAlignment="Top" Margin="0,4,14,0"/>
+                            <TextBox x:Name="WizDesc" Grid.Row="6" Grid.Column="1" Height="54" TextWrapping="Wrap"
+                                     AcceptsReturn="True" VerticalScrollBarVisibility="Auto"/>
+
+                            <TextBlock Grid.Row="7" Text="项目目录" VerticalAlignment="Center" Margin="0,0,14,0"/>
+                            <StackPanel Grid.Row="7" Grid.Column="1" Orientation="Horizontal">
+                                <TextBox x:Name="WizDir" Width="380" TextChanged="WizDir_TextChanged"/>
+                                <Button Content="浏览…" Margin="8,0,0,0" Click="WizBrowse_Click"/>
+                            </StackPanel>
+                        </Grid>
+
+                        <Button x:Name="BtnCreateProject" Content="创建项目并生成脚手架" Width="240" Margin="0,20,0,0"
+                                HorizontalAlignment="Left" Style="{StaticResource AccentButton}" Click="CreateProject_Click"/>
+                    </StackPanel>
+                </ScrollViewer>
+            </Border>
+        </TabItem>
+
+        <!-- ============ 项目设置 ============ -->
+        <TabItem Header="项目设置与依赖">
+            <Border Background="{DynamicResource PanelBrush}" BorderBrush="{DynamicResource BorderBrush}"
+                    BorderThickness="1" CornerRadius="8" Padding="20" Margin="0,10,0,0">
+                <DockPanel>
+                    <Button DockPanel.Dock="Bottom" Content="保存设置" Width="140" HorizontalAlignment="Left"
+                            Style="{StaticResource AccentButton}"
+                            Click="SaveSettings_Click"/>
+                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        <StackPanel x:Name="SettingsPanel" MaxWidth="760" HorizontalAlignment="Left"/>
+                    </ScrollViewer>
+                </DockPanel>
+            </Border>
+        </TabItem>
+
+        <!-- ============ 构建与打包 ============ -->
+        <TabItem Header="构建与打包">
+            <Grid Margin="0,10,0,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Border Background="{DynamicResource PanelBrush}" BorderBrush="{DynamicResource BorderBrush}"
+                        BorderThickness="1" CornerRadius="8" Padding="12,8">
+                    <StackPanel Orientation="Horizontal">
+                        <Button x:Name="BtnBuild" Content="🔨 一键构建" Style="{StaticResource AccentButton}" Click="Build_Click"/>
+                        <Button Content="📦 打包整合包（资源+数据+模组清单）" Margin="10,0,0,0" Click="PackModpack_Click"/>
+                        <Button Content="🚀 部署到测试环境" Margin="10,0,0,0" Click="DeployTest_Click"
+                                ToolTip="跳转到「测试工具」模块进行部署与热重载"/>
+                        <CheckBox x:Name="RunClientCheck" Content="构建后启动游戏客户端" Margin="14,0,0,0" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Border>
+                <Border Grid.Row="1" Background="{DynamicResource LogBgBrush}" BorderBrush="{DynamicResource BorderBrush}"
+                        BorderThickness="1" CornerRadius="8" Margin="0,10,0,0" ClipToBounds="True">
+                    <TextBox x:Name="BuildLog" Background="Transparent" Foreground="{DynamicResource LogTextBrush}" BorderThickness="0"
+                             FontFamily="{StaticResource MonoFont}" FontSize="12.5" IsReadOnly="True" TextWrapping="Wrap"
+                             VerticalScrollBarVisibility="Auto" Padding="10"/>
+                </Border>
+            </Grid>
+        </TabItem>
+    </TabControl>
+</UserControl>

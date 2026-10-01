@@ -1,0 +1,107 @@
+<UserControl x:Class="MCModCoder.Modules.OverviewView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="28,22">
+        <StackPanel MaxWidth="980">
+            <TextBlock Text="欢迎使用 MC模组代码工作台" FontSize="26" FontWeight="Bold"/>
+            <TextBlock Foreground="{DynamicResource TextDimBrush}" Margin="0,6,0,18"
+                       Text="纯 C# 打造的一站式 Minecraft 模组与整合包开发环境：像素级纹理设计 → 可视化配方 → 3D 结构 → 代码编写 → 构建 → 测试，全流程闭环。"/>
+
+            <!-- 项目状态卡 -->
+            <Border Background="{DynamicResource PanelBrush}" BorderBrush="{DynamicResource BorderBrush}"
+                    BorderThickness="1" CornerRadius="8" Padding="18" Margin="0,0,0,16">
+                <StackPanel>
+                    <TextBlock Text="当前项目" FontSize="14" FontWeight="SemiBold"/>
+                    <TextBlock x:Name="ProjectCard" Foreground="{DynamicResource TextDimBrush}" Margin="0,6,0,0"
+                               Text="尚未打开项目。点击右上角「新建项目」，选择 Minecraft 版本与加载器即可开始。"/>
+                </StackPanel>
+            </Border>
+
+            <!-- 最近项目 -->
+            <TextBlock Text="最近项目" Style="{StaticResource SectionHeader}"/>
+            <ListBox x:Name="RecentList" Height="Auto" MinHeight="52" Margin="0,0,0,16" BorderThickness="1"
+                     HorizontalContentAlignment="Stretch">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Grid Margin="6,4">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel>
+                                <TextBlock Text="{Binding Name}" FontWeight="SemiBold"/>
+                                <TextBlock Text="{Binding Path}" Foreground="{DynamicResource TextDimBrush}" FontSize="11"/>
+                            </StackPanel>
+                            <Button Grid.Column="1" Content="打开" Padding="10,3" Margin="10,0,0,0" Click="OpenRecent_Click"/>
+                        </Grid>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+
+            <!-- 模块导航卡片 -->
+            <TextBlock Text="功能模块" Style="{StaticResource SectionHeader}"/>
+            <UniformGrid Columns="3" Margin="0,0,0,16">
+                <Border Style="{StaticResource CardBorder}"><StackPanel>
+                    <TextBlock Text="🎨 物品图像设计" FontWeight="SemiBold" FontSize="14"/>
+                    <TextBlock Foreground="{DynamicResource TextDimBrush}" TextWrapping="Wrap"
+                               Text="像素级纹理绘制、图层管理、手持/放置预览、资源包自动生成。"/>
+                </StackPanel></Border>
+                <Border Style="{StaticResource CardBorder}"><StackPanel>
+                    <TextBlock Text="⚗️ 配方设置" FontWeight="SemiBold" FontSize="14"/>
+                    <TextBlock Foreground="{DynamicResource TextDimBrush}" TextWrapping="Wrap"
+                               Text="拖拽式配方编辑，支持合成/熔炉/酿造/切石/锻造，JSON 双向兼容。"/>
+                </StackPanel></Border>
+                <Border Style="{StaticResource CardBorder}"><StackPanel>
+                    <TextBlock Text="🧱 多方块结构" FontWeight="SemiBold" FontSize="14"/>
+                    <TextBlock Foreground="{DynamicResource TextDimBrush}" TextWrapping="Wrap"
+                               Text="3D 网格结构编辑器，旋转/镜像/复制粘贴，结构库管理。"/>
+                </StackPanel></Border>
+                <Border Style="{StaticResource CardBorder}"><StackPanel>
+                    <TextBlock Text="💻 代码编写" FontWeight="SemiBold" FontSize="14"/>
+                    <TextBlock Foreground="{DynamicResource TextDimBrush}" TextWrapping="Wrap"
+                               Text="语法高亮、AI 上下文补全（可关闭）、片段库、错误提示与格式化。"/>
+                </StackPanel></Border>
+                <Border Style="{StaticResource CardBorder}"><StackPanel>
+                    <TextBlock Text="🛠 开发环境" FontWeight="SemiBold" FontSize="14"/>
+                    <TextBlock Foreground="{DynamicResource TextDimBrush}" TextWrapping="Wrap"
+                               Text="1.12.2 ~ 1.20+ 项目向导，Forge/Fabric/NeoForge/Rift 依赖与一键构建。"/>
+                </StackPanel></Border>
+                <Border Style="{StaticResource CardBorder}"><StackPanel>
+                    <TextBlock Text="🧪 测试工具" FontWeight="SemiBold" FontSize="14"/>
+                    <TextBlock Foreground="{DynamicResource TextDimBrush}" TextWrapping="Wrap"
+                               Text="日志捕获分析、热重载部署、FPS/内存/CPU 性能监控。"/>
+                </StackPanel></Border>
+                <Border Style="{StaticResource CardBorder}"><StackPanel>
+                    <TextBlock Text="🗺 地图编辑" FontWeight="SemiBold" FontSize="14"/>
+                    <TextBlock Foreground="{DynamicResource TextDimBrush}" TextWrapping="Wrap"
+                               Text="地形生成与笔刷雕刻、群系绘制、矿物分布、导入导出。"/>
+                </StackPanel></Border>
+                <Border Style="{StaticResource CardBorder}"><StackPanel>
+                    <TextBlock Text="🏰 地牢编辑" FontWeight="SemiBold" FontSize="14"/>
+                    <TextBlock Foreground="{DynamicResource TextDimBrush}" TextWrapping="Wrap"
+                               Text="房间/走廊自定义，随机与固定两种生成模式，测试生成预览。"/>
+                </StackPanel></Border>
+                <Border Style="{StaticResource CardBorder}"><StackPanel>
+                    <TextBlock Text="⚡ 模拟运行" FontWeight="SemiBold" FontSize="14"/>
+                    <TextBlock Foreground="{DynamicResource TextDimBrush}" TextWrapping="Wrap"
+                               Text="红石电路模拟、实体行为模拟、方块交互与游戏规则调整。"/>
+                </StackPanel></Border>
+                <Border Style="{StaticResource CardBorder}"><StackPanel>
+                    <TextBlock Text="🌅 光影编辑" FontWeight="SemiBold" FontSize="14"/>
+                    <TextBlock Foreground="{DynamicResource TextDimBrush}" TextWrapping="Wrap"
+                               Text="光源/阴影/环境光/雾效实时预览，GLSL 导出，A/B 对比。"/>
+                </StackPanel></Border>
+                <Border Style="{StaticResource CardBorder}"><StackPanel>
+                    <TextBlock Text="✨ 渲染编辑" FontWeight="SemiBold" FontSize="14"/>
+                    <TextBlock Foreground="{DynamicResource TextDimBrush}" TextWrapping="Wrap"
+                               Text="粒子效果发射器、材质参数、动画曲线与渲染性能优化。"/>
+                </StackPanel></Border>
+                <Border Style="{StaticResource CardBorder}"><StackPanel>
+                    <TextBlock Text="🔁 闭环工作流" FontWeight="SemiBold" FontSize="14"/>
+                    <TextBlock Foreground="{DynamicResource TextDimBrush}" TextWrapping="Wrap"
+                               Text="地牢→结构、纹理→渲染、配方→数据包导出，模块间数据无缝流转。"/>
+                </StackPanel></Border>
+            </UniformGrid>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

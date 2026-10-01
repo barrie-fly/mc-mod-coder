@@ -1,0 +1,91 @@
+<UserControl x:Class="MCModCoder.Modules.TestView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Grid Margin="14">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="300"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- 左：部署 + 测试 + 性能 -->
+        <Border Grid.Column="0" Background="{DynamicResource PanelBrush}" BorderBrush="{DynamicResource BorderBrush}"
+                BorderThickness="1" CornerRadius="8" Padding="10" Margin="0,0,10,0">
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <StackPanel>
+                    <TextBlock Text="游戏内测试部署" FontWeight="SemiBold"/>
+                    <TextBlock Text="游戏 mods 目录" Style="{StaticResource DimText}" Margin="0,6,0,2"/>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBox x:Name="ModsDirBox" Width="200" Text="%APPDATA%\.minecraft\mods"/>
+                        <Button Content="浏览…" Style="{StaticResource ToolButton}" Margin="4,0,0,0" Click="BrowseMods_Click"/>
+                    </StackPanel>
+                    <Button x:Name="BtnDeploy" Content="部署模组（复制到 mods）" Margin="0,8,0,0"
+                            Style="{StaticResource AccentButton}" Click="Deploy_Click"/>
+                    <CheckBox x:Name="HotReloadToggle" Content="热重载：构建产物变化时自动重新部署"
+                              IsChecked="False" Margin="0,8,0,0" Checked="HotReload_Changed" Unchecked="HotReload_Changed"/>
+                    <TextBlock x:Name="HotReloadState" Style="{StaticResource DimText}" Margin="0,4,0,0" Text="热重载未启用"/>
+                    <Button Content="打开日志目录…" Margin="0,8,0,0" Click="OpenLogs_Click"/>
+
+                    <TextBlock Text="单元测试 / 集成测试" FontWeight="SemiBold" Margin="0,16,0,4"/>
+                    <Button x:Name="BtnRunTests" Content="▶ 运行内置测试套件" Click="RunTests_Click"
+                            Style="{StaticResource SuccessButton}"/>
+                    <TextBox x:Name="TestOutput" Height="170" Margin="0,8,0,0" IsReadOnly="True" AcceptsReturn="True"
+                             TextWrapping="Wrap" VerticalScrollBarVisibility="Auto"
+                             FontFamily="{StaticResource MonoFont}" FontSize="11.5"/>
+
+                    <TextBlock Text="性能监控" FontWeight="SemiBold" Margin="0,16,0,4"/>
+                    <StackPanel Orientation="Horizontal">
+                        <ComboBox x:Name="ProcessCombo" Width="170"/>
+                        <Button Content="刷新" Style="{StaticResource ToolButton}" Margin="6,0,0,0" Click="RefreshProcs_Click"/>
+                    </StackPanel>
+                    <Button x:Name="BtnMonitor" Content="▶ 开始监控" Margin="0,8,0,0" Click="Monitor_Click"
+                            ToolTip="监控选中进程的 CPU / 内存占用；再次点击停止"/>
+                    <TextBlock x:Name="PerfText" FontFamily="{StaticResource MonoFont}" FontSize="12" Margin="0,8,0,0"
+                               Text="CPU: --  |  内存: --  |  预览帧率: --"/>
+                    <Canvas x:Name="PerfChart" Height="90" Background="{DynamicResource DeepBgBrush}" Margin="0,6,0,0" ClipToBounds="True"/>
+                </StackPanel>
+            </ScrollViewer>
+        </Border>
+
+        <!-- 右：日志捕获与分析 -->
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Border Grid.Row="0" Background="{DynamicResource PanelBrush}" BorderBrush="{DynamicResource BorderBrush}"
+                    BorderThickness="1" CornerRadius="8" Padding="10,6">
+                <StackPanel Orientation="Horizontal">
+                    <Button Content="导入日志…" Style="{StaticResource ToolButton}" Click="LoadLog_Click"/>
+                    <ComboBox x:Name="LevelFilter" Width="110" Margin="10,0,0,0" SelectionChanged="ApplyLogFilter">
+                        <ComboBoxItem Content="全部" IsSelected="True"/><ComboBoxItem Content="ERROR"/>
+                        <ComboBoxItem Content="WARN"/><ComboBoxItem Content="INFO"/>
+                    </ComboBox>
+                    <TextBox x:Name="LogSearch" Width="180" Margin="10,0,0,0" TextChanged="ApplyLogFilter" Text=""
+                             Style="{StaticResource SearchBox}" Tag="过滤日志关键字…"/>
+                    <Button Content="🧠 智能分析" Style="{StaticResource ToolButton}" Margin="10,0,0,0" Click="AnalyzeLog_Click"/>
+                    <TextBlock x:Name="LogCountText" Margin="14,0,0,0" VerticalAlignment="Center" Style="{StaticResource DimText}"/>
+                </StackPanel>
+            </Border>
+            <ListBox Grid.Row="1" x:Name="LogList" Margin="0,10,0,0" BorderThickness="1"
+                     FontFamily="{StaticResource MonoFont}" FontSize="12" HorizontalContentAlignment="Stretch">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Line}" Foreground="{Binding Brush}" TextWrapping="Wrap"/>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+            <ListBox Grid.Row="2" x:Name="FindingList" Height="170" Margin="0,10,0,0" BorderThickness="1">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Margin="2">
+                            <TextBlock Text="{Binding Title}" FontWeight="SemiBold" Foreground="{DynamicResource AccentBrush}"/>
+                            <TextBlock Text="{Binding Detail}" FontSize="11.5"/>
+                            <TextBlock Text="{Binding Advice}" FontSize="11.5" Foreground="{DynamicResource GreenBrush}" TextWrapping="Wrap"/>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </Grid>
+    </Grid>
+</UserControl>

@@ -1,0 +1,214 @@
+<UserControl x:Class="MCModCoder.Modules.CodeEditorView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Grid Margin="14">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- 顶部工具条 -->
+        <Border Grid.Row="0" Background="{DynamicResource PanelBrush}" BorderBrush="{DynamicResource BorderBrush}"
+                BorderThickness="1" CornerRadius="8" Padding="10,6" Margin="0,0,0,10">
+            <DockPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Button Content="新建" Style="{StaticResource ToolButton}" Click="NewFile_Click"/>
+                    <Button Content="打开…" Style="{StaticResource ToolButton}" Margin="6,0,0,0" Click="OpenFile_Click"/>
+                    <Button Content="保存" Style="{StaticResource ToolButton}" Margin="6,0,0,0" Click="SaveFile_Click"/>
+                    <Button Content="格式化" Style="{StaticResource ToolButton}" Margin="6,0,0,0" Click="Format_Click"/>
+                    <TextBlock x:Name="FileLabel" Text="（未命名）" Margin="14,0,0,0" VerticalAlignment="Center"
+                               Foreground="{DynamicResource AccentBrush}" MaxWidth="260"
+                               TextTrimming="CharacterEllipsis" ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <CheckBox x:Name="AiToggle" Content="AI 辅助补全" IsChecked="True" VerticalAlignment="Center"
+                              Checked="AiToggle_Changed" Unchecked="AiToggle_Changed"/>
+                    <Button Content="Git 状态" Style="{StaticResource ToolButton}" Margin="14,0,0,0" Click="GitStatus_Click"/>
+                    <Button Content="Git 提交…" Style="{StaticResource ToolButton}" Margin="6,0,0,0" Click="GitCommit_Click"/>
+                </StackPanel>
+            </DockPanel>
+        </Border>
+
+        <!-- 主体 -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="260"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="290"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- 左：代码片段库 -->
+            <Border Grid.Column="0" Background="{DynamicResource PanelBrush}" BorderBrush="{DynamicResource BorderBrush}"
+                    BorderThickness="1" CornerRadius="8" Padding="10" Margin="0,0,10,0">
+                <DockPanel>
+                    <StackPanel DockPanel.Dock="Top">
+                        <TextBlock Text="代码片段库" FontWeight="SemiBold"/>
+                        <TextBlock Style="{StaticResource DimText}" Text="双击插入到光标处" Margin="0,2,0,6"/>
+                    </StackPanel>
+                    <Button DockPanel.Dock="Bottom" Content="将选中代码存为片段" Margin="0,8,0,0" Click="SaveSnippet_Click"/>
+                    <ListBox x:Name="SnippetList" MouseDoubleClick="SnippetList_DoubleClick" BorderThickness="1">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Margin="2">
+                                    <TextBlock Text="{Binding Name}" FontWeight="SemiBold"/>
+                                    <TextBlock Text="{Binding Description}" Foreground="{DynamicResource TextDimBrush}"
+                                               FontSize="11" TextTrimming="CharacterEllipsis"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </DockPanel>
+            </Border>
+
+            <!-- 中：编辑器 -->
+            <Grid Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Border Grid.Row="0" Background="{DynamicResource CodeBgBrush}" BorderBrush="{DynamicResource BorderBrush}"
+                        BorderThickness="1" CornerRadius="8" ClipToBounds="True">
+                    <RichTextBox x:Name="Editor" AcceptsTab="True" AcceptsReturn="True"
+                                 FontFamily="{StaticResource MonoFont}" FontSize="13.5" Foreground="{DynamicResource TextBrush}"
+                                 Background="Transparent" BorderThickness="0"
+                                 VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"
+                                 Padding="12" TextChanged="Editor_TextChanged"
+                                 KeyDown="Editor_KeyDown"/>
+                </Border>
+                <!-- 查找栏（Ctrl+F） -->
+                <Border x:Name="FindBar" Visibility="Collapsed" HorizontalAlignment="Right" VerticalAlignment="Top"
+                        Margin="10" Background="{DynamicResource PanelStrongBrush}" BorderBrush="{DynamicResource BorderBrush}"
+                        BorderThickness="1" CornerRadius="6" Padding="8,6">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBox x:Name="FindBox" Width="190" TextChanged="FindBox_TextChanged" KeyDown="FindBox_KeyDown"/>
+                        <TextBlock x:Name="FindCount" Text="" Style="{StaticResource DimText}" VerticalAlignment="Center"
+                                   Margin="8,0" MinWidth="60"/>
+                        <Button Content="↑" Style="{StaticResource ToolButton}" Click="FindPrev_Click" ToolTip="上一个"/>
+                        <Button Content="↓" Style="{StaticResource ToolButton}" Margin="4,0,0,0" Click="FindNext_Click" ToolTip="下一个"/>
+                        <Button Content="✕" Style="{StaticResource ToolButton}" Margin="4,0,0,0" Click="FindClose_Click" ToolTip="关闭"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- AI 补全弹窗 -->
+                <Popup x:Name="AiPopup" AllowsTransparency="True" Placement="RelativePoint" StaysOpen="False">
+                    <Border Background="{DynamicResource PopupBgBrush}" BorderBrush="{DynamicResource AccentBrush}" BorderThickness="1"
+                            CornerRadius="6" MinWidth="300" MaxWidth="430">
+                        <StackPanel>
+                            <TextBlock Text="AI 补全建议 (Enter 确认 / Esc 关闭)" FontSize="10.5"
+                                       Foreground="{DynamicResource TextDimBrush}" Margin="10,6,10,2"/>
+                            <ListBox x:Name="AiList" BorderThickness="0" Background="Transparent"
+                                     MouseDoubleClick="AiList_DoubleClick">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Margin="2">
+                                            <TextBlock Text="{Binding Label}" FontWeight="SemiBold" FontFamily="{StaticResource MonoFont}"/>
+                                            <TextBlock Text="{Binding Detail}" Foreground="{DynamicResource TextDimBrush}" FontSize="11"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                        </StackPanel>
+                    </Border>
+                </Popup>
+
+                <!-- 错误面板 -->
+                <Border Grid.Row="1" Background="{DynamicResource PanelBrush}" BorderBrush="{DynamicResource BorderBrush}"
+                        BorderThickness="1" CornerRadius="8" Padding="8,4" Margin="0,8,0,0" MaxHeight="120">
+                    <DockPanel>
+                        <TextBlock DockPanel.Dock="Left" x:Name="ErrorSummary" Text="0 个问题" VerticalAlignment="Center"
+                                   Margin="0,0,12,0" FontWeight="SemiBold"/>
+                        <ListBox x:Name="ErrorList" Background="Transparent" BorderThickness="0">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding}" FontSize="11.5"/>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </DockPanel>
+                </Border>
+            </Grid>
+
+            <!-- 右：AI 开发助手（实时建议 + 内容点评） -->
+            <Border Grid.Column="2" Background="{DynamicResource PanelBrush}" BorderBrush="{DynamicResource BorderBrush}"
+                    BorderThickness="1" CornerRadius="8" Padding="10" Margin="10,0,0,0">
+                <DockPanel>
+                    <DockPanel DockPanel.Dock="Top" Margin="0,0,0,6">
+                        <TextBlock Text="🤖 AI 开发助手" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                        <CheckBox x:Name="InsightToggle" Content="启用" IsChecked="True" HorizontalAlignment="Right"
+                                  Checked="InsightToggle_Changed" Unchecked="InsightToggle_Changed"
+                                  ToolTip="开启后根据当前代码与操作上下文实时给出建议与点评"/>
+                    </DockPanel>
+                    <TextBlock DockPanel.Dock="Top" Style="{StaticResource DimText}" Margin="0,0,0,8"
+                               Text="随输入实时更新 · 全程本地分析，不联网"/>
+                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        <StackPanel>
+                            <!-- 实时建议 -->
+                            <TextBlock Text="⚡ 实时建议" FontWeight="SemiBold"/>
+                            <TextBlock x:Name="SuggestionEmpty" Style="{StaticResource DimText}" Margin="0,4,0,0"
+                                       Text="当前没有需要处理的问题，继续保持！"/>
+                            <ItemsControl x:Name="SuggestionList" Margin="0,4,0,0">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border Background="{DynamicResource Panel2Brush}" CornerRadius="6" Padding="8,6" Margin="0,0,0,6">
+                                            <StackPanel>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBlock x:Name="SevBadge" Text="💡" Margin="0,0,6,0"/>
+                                                    <TextBlock Text="{Binding Title}" FontWeight="SemiBold" TextWrapping="Wrap"/>
+                                                </StackPanel>
+                                                <TextBlock Text="{Binding Detail}" Foreground="{DynamicResource TextDimBrush}"
+                                                           FontSize="11.5" TextWrapping="Wrap" Margin="0,2,0,0"/>
+                                            </StackPanel>
+                                        </Border>
+                                        <DataTemplate.Triggers>
+                                            <DataTrigger Binding="{Binding Severity}" Value="warn">
+                                                <Setter TargetName="SevBadge" Property="Text" Value="⚠"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding Severity}" Value="info">
+                                                <Setter TargetName="SevBadge" Property="Text" Value="ℹ"/>
+                                            </DataTrigger>
+                                        </DataTemplate.Triggers>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+
+                            <!-- 内容点评 -->
+                            <TextBlock Text="📋 内容点评" FontWeight="SemiBold" Margin="0,8,0,0"/>
+                            <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
+                                <Border x:Name="ScoreBadge" Background="{DynamicResource AccentDimBrush}" CornerRadius="6" Padding="8,3">
+                                    <TextBlock x:Name="ScoreText" Text="—" FontWeight="Bold"/>
+                                </Border>
+                                <TextBlock x:Name="ReviewSummary" Style="{StaticResource DimText}" Margin="8,0,0,0"
+                                           VerticalAlignment="Center" TextWrapping="Wrap"/>
+                            </StackPanel>
+                            <TextBlock Text="✨ 亮点" Foreground="{DynamicResource GreenBrush}" Margin="0,8,0,2"/>
+                            <ItemsControl x:Name="HighlightList">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal" Margin="0,1">
+                                            <TextBlock Text="▸ " Foreground="{DynamicResource GreenBrush}"/>
+                                            <TextBlock Text="{Binding}" TextWrapping="Wrap"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                            <TextBlock Text="🔧 可改进" Foreground="{DynamicResource YellowBrush}" Margin="0,8,0,2"/>
+                            <ItemsControl x:Name="ImproveList">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal" Margin="0,1">
+                                            <TextBlock Text="▸ " Foreground="{DynamicResource YellowBrush}"/>
+                                            <TextBlock Text="{Binding}" TextWrapping="Wrap"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+                    </ScrollViewer>
+                </DockPanel>
+            </Border>
+        </Grid>
+
+        <TextBlock Grid.Row="2" x:Name="CodeStatus" Style="{StaticResource DimText}" Margin="4,8,0,0" Text="就绪"/>
+    </Grid>
+</UserControl>

@@ -1,0 +1,203 @@
+<UserControl x:Class="MCModCoder.Modules.AiImageView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Grid>
+        <Grid x:Name="MainRoot" Margin="14">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="380"/>
+                <ColumnDefinition Width="14"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- ============ 左列：服务设置 + 生成 ============ -->
+            <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto">
+                <StackPanel>
+                    <TextBlock Text="🔌 外接 AI 服务" Style="{StaticResource SectionHeader}"/>
+                    <Border Style="{StaticResource CardBorder}" Margin="0,6,0,12" Padding="12">
+                        <StackPanel>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="76"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/><RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/><RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/><RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <Grid.Resources>
+                                    <Style TargetType="TextBlock" BasedOn="{StaticResource DimText}">
+                                        <Setter Property="VerticalAlignment" Value="Center"/>
+                                        <Setter Property="Margin" Value="0,4,8,4"/>
+                                    </Style>
+                                    <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
+                                        <Setter Property="Margin" Value="0,4,0,4"/>
+                                    </Style>
+                                </Grid.Resources>
+
+                                <TextBlock Text="服务类型"/>
+                                <ComboBox x:Name="CmbProvider" Grid.Column="1" SelectionChanged="Provider_SelectionChanged" Margin="0,4,0,4">
+                                    <ComboBoxItem Content="OpenAI 兼容接口（DALL-E 等）" Tag="openai"/>
+                                    <ComboBoxItem Content="Stable Diffusion WebUI" Tag="sd"/>
+                                </ComboBox>
+
+                                <TextBlock Grid.Row="1" Text="服务地址"/>
+                                <TextBox x:Name="TxtEndpoint" Grid.Row="1" Grid.Column="1"
+                                         ToolTip="OpenAI 兼容：https://api.openai.com/v1；SD WebUI：http://127.0.0.1:7860"/>
+
+                                <TextBlock Grid.Row="2" Text="API 密钥"/>
+                                <PasswordBox x:Name="PswApiKey" Grid.Row="2" Grid.Column="1" Margin="0,4,0,4"
+                                             ToolTip="OpenAI 兼容接口需要；SD WebUI 留空即可"/>
+
+                                <TextBlock Grid.Row="3" Text="模型"/>
+                                <TextBox x:Name="TxtModel" Grid.Row="3" Grid.Column="1" Text="dall-e-3"
+                                         ToolTip="如 dall-e-3、dall-e-2、cogview-3 等（SD WebUI 忽略此项）"/>
+
+                                <TextBlock Grid.Row="4" Text="出图尺寸"/>
+                                <ComboBox x:Name="CmbSize" Grid.Row="4" Grid.Column="1" IsEditable="True" Margin="0,4,0,4">
+                                    <ComboBoxItem Content="1024x1024" IsSelected="True"/>
+                                    <ComboBoxItem Content="1024x1792"/>
+                                    <ComboBoxItem Content="1792x1024"/>
+                                    <ComboBoxItem Content="512x512"/>
+                                    <ComboBoxItem Content="768x768"/>
+                                </ComboBox>
+
+                                <TextBlock Grid.Row="5" Text="负面提示词"/>
+                                <TextBox x:Name="TxtNegative" Grid.Row="5" Grid.Column="1"
+                                         ToolTip="不希望出现的内容：SD WebUI 以独立字段发送；OpenAI 兼容接口以「Avoid…」融入提示词"/>
+                            </Grid>
+
+                            <CheckBox x:Name="ChkPixelStyle" Content="自动附加像素游戏纹理风格约束（推荐）"
+                                      IsChecked="True" Margin="0,8,0,6"/>
+                            <Button Content="💾 保存设置" Style="{StaticResource ToolButton}"
+                                    HorizontalAlignment="Right" Click="SaveSettings_Click"/>
+                        </StackPanel>
+                    </Border>
+
+                    <TextBlock Text="✨ 描述你要生成的图像" Style="{StaticResource SectionHeader}"/>
+                    <Border Style="{StaticResource CardBorder}" Margin="0,6,0,0" Padding="12">
+                        <StackPanel>
+                            <TextBox x:Name="TxtPrompt" Height="92" AcceptsReturn="True" TextWrapping="Wrap"
+                                     VerticalScrollBarVisibility="Auto"
+                                     ToolTip="例：一把发光的蓝色魔法剑，剑身缠绕闪电"/>
+                            <TextBlock Text="风格预设" Style="{StaticResource DimText}" Margin="0,8,0,4"/>
+                            <ItemsControl x:Name="StyleChips">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate><WrapPanel/></ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Button Content="{Binding Name}" Style="{StaticResource ToolButton}" Margin="0,0,6,6"
+                                                ToolTip="{Binding Hint}" Tag="{Binding}" Click="StyleChip_Click"/>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+
+                            <Button x:Name="BtnGenerate" Content="🎨 生成图像" Style="{StaticResource AccentButton}"
+                                    Margin="0,6,0,0" Click="Generate_Click"/>
+                            <TextBlock x:Name="GenStatus" Style="{StaticResource DimText}" TextWrapping="Wrap"
+                                       Margin="0,6,0,0" Text="提示：生成结果会自动保存到项目 workspace/ai-images 目录。"/>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </ScrollViewer>
+
+            <!-- ============ 右列：预览 + 历史 ============ -->
+            <Grid Grid.Column="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <Border Style="{StaticResource CardBorder}" Padding="10">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Border Background="{DynamicResource CodeBgBrush}" CornerRadius="6" ClipToBounds="True">
+                            <Grid>
+                                <TextBlock x:Name="PreviewPlaceholder" Text="🖼&#x0a;生成结果预览" FontSize="20" Opacity="0.35"
+                                           HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center"/>
+                                <Image x:Name="PreviewImage" Stretch="Uniform" Margin="8"
+                                       RenderOptions.BitmapScalingMode="HighQuality"
+                                       MouseLeftButtonDown="PreviewImage_Click" Cursor="Hand"
+                                       ToolTip="点击可另存为…"/>
+                            </Grid>
+                        </Border>
+
+                        <StackPanel Grid.Row="1" Margin="0,8,0,0">
+                            <TextBlock x:Name="RevisedText" Style="{StaticResource DimText}" TextWrapping="Wrap"
+                                       MaxHeight="42" TextTrimming="CharacterEllipsis" Visibility="Collapsed"/>
+
+                            <!-- AI 输出审计报告 -->
+                            <Border x:Name="AuditPanel" Visibility="Collapsed" CornerRadius="6" Padding="10,8"
+                                    Margin="0,6,0,0" Background="{DynamicResource Panel2Brush}"
+                                    BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
+                                <StackPanel>
+                                    <TextBlock x:Name="AuditSummary" FontWeight="Bold" FontSize="12.5"/>
+                                    <ItemsControl x:Name="AuditList" Margin="0,4,0,0">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding Text}" Foreground="{Binding Brush}"
+                                                           FontSize="12" TextWrapping="Wrap" Margin="0,1.5"/>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </StackPanel>
+                            </Border>
+
+                            <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
+                                <Button x:Name="BtnImportTextures" Content="📥 导入到纹理库" Style="{StaticResource AccentButton}"
+                                        IsEnabled="False" Click="ImportToTextures_Click"
+                                        ToolTip="复制到 workspace/textures 并推送给「物品图像设计」继续编辑（导入前会再次审计）"/>
+                                <Button x:Name="BtnOpenFolder" Content="📁 打开所在文件夹" Style="{StaticResource ToolButton}" Margin="8,0,0,0"
+                                        IsEnabled="False" Click="OpenFolder_Click"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <StackPanel Grid.Row="1" Margin="0,10,0,0">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="🗂 生成历史" Style="{StaticResource SectionHeader}"/>
+                        <Button Content="刷新" Style="{StaticResource ToolButton}" FontSize="11" Padding="8,2"
+                                VerticalAlignment="Center" Margin="10,0,0,0" Click="RefreshHistory_Click"/>
+                    </StackPanel>
+                    <ListBox x:Name="HistoryList" Height="132" Margin="0,6,0,0" Background="Transparent" BorderThickness="0"
+                             ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                             SelectionChanged="History_SelectionChanged">
+                        <ListBox.ItemsPanel>
+                            <ItemsPanelTemplate><WrapPanel Orientation="Horizontal"/></ItemsPanelTemplate>
+                        </ListBox.ItemsPanel>
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Border Width="96" Margin="3" Padding="4" CornerRadius="6"
+                                        Background="{DynamicResource Panel2Brush}"
+                                        BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"
+                                        ToolTip="{Binding Name}">
+                                    <StackPanel>
+                                        <Image Source="{Binding Thumb}" Width="86" Height="86" Stretch="Uniform"
+                                               RenderOptions.BitmapScalingMode="HighQuality"/>
+                                        <TextBlock Text="{Binding TimeText}" FontSize="9.5" Foreground="{DynamicResource TextDimBrush}"
+                                                   HorizontalAlignment="Center" Margin="0,3,0,0"/>
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </StackPanel>
+            </Grid>
+        </Grid>
+
+        <!-- 未打开项目守卫遮罩 -->
+        <Border x:Name="GuardMask" Visibility="Hidden" Background="{DynamicResource OverlayBrush}" IsHitTestVisible="True">
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                <TextBlock Text="🔒" FontSize="42" HorizontalAlignment="Center"/>
+                <TextBlock Text="尚未打开项目" FontSize="16" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,12,0,0"/>
+                <TextBlock Text="请先在右上角「新建项目」或「打开项目」，AI 生成结果需要保存到项目目录。"
+                           Style="{StaticResource DimText}" HorizontalAlignment="Center" Margin="0,8,0,0"/>
+            </StackPanel>
+        </Border>
+    </Grid>
+</UserControl>

@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>MCModCoder</RootNamespace>
+    <AssemblyName>MCModCoder</AssemblyName>
+    <!-- 框架依赖版兼容性：目标 net8.0，本机装有更高版本运行时（如 .NET 10）时直接滚动前缀运行 -->
+    <RollForward>Major</RollForward>
+    <ApplicationHighDpiMode>PerMonitorV2</ApplicationHighDpiMode>
+    <ApplicationIcon>Assets\app.ico</ApplicationIcon>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\app.ico" />
+    <Resource Include="Assets\logo-mark.png" />
+    <Resource Include="Assets\logo-full.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MCModCoder.Core\MCModCoder.Core.csproj" />
+  </ItemGroup>
+
+</Project>

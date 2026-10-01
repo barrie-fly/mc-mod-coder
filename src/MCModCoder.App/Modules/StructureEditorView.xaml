@@ -1,0 +1,101 @@
+<UserControl x:Class="MCModCoder.Modules.StructureEditorView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Grid Margin="14">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="250"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="230"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- 左：调色板与操作 -->
+        <Border Grid.Column="0" Background="{DynamicResource PanelBrush}" BorderBrush="{DynamicResource BorderBrush}"
+                BorderThickness="1" CornerRadius="8" Padding="10" Margin="0,0,10,0">
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <StackPanel>
+                    <TextBlock Text="方块调色板" FontWeight="SemiBold"/>
+                    <ComboBox x:Name="PaletteCombo" Margin="0,6,0,0"/>
+                    <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
+                        <TextBox x:Name="CustomBlockBox" Width="130" Text="minecraft:stone"/>
+                        <Button Content="添加" Style="{StaticResource ToolButton}" Margin="6,0,0,0" Click="AddPalette_Click"/>
+                    </StackPanel>
+                    <TextBlock Style="{StaticResource DimText}" Margin="0,4,0,0"
+                               Text="左键放置 · 右键删除 · 中键/Ctrl+左键 旋转 · Shift+中键 平移 · 滚轮缩放"/>
+
+                    <TextBlock Text="视角预设" FontWeight="SemiBold" Margin="0,14,0,4"/>
+                    <UniformGrid Columns="3">
+                        <RadioButton x:Name="PresetOverview" Content="全景" GroupName="view" IsChecked="True" Tag="overview"
+                                     Checked="Preset_Changed" ToolTip="默认 3/4 等轴视角（切换带平滑过渡动画）"/>
+                        <RadioButton x:Name="PresetTop" Content="俯视" GroupName="view" Tag="top" Margin="6,0,0,0"
+                                     Checked="Preset_Changed" ToolTip="自上而下观察"/>
+                        <RadioButton x:Name="PresetSide" Content="侧视" GroupName="view" Tag="side" Margin="6,0,0,0"
+                                     Checked="Preset_Changed" ToolTip="自 +X 方向观察"/>
+                    </UniformGrid>
+                    <UniformGrid Columns="3" Margin="0,6,0,0">
+                        <RadioButton x:Name="PresetFront" Content="正视" GroupName="view" Tag="front"
+                                     Checked="Preset_Changed" ToolTip="自 +Z 方向观察"/>
+                        <RadioButton x:Name="PresetFree" Content="自由" GroupName="view" Tag="free" Margin="6,0,0,0"
+                                     Checked="Preset_Changed" ToolTip="自由视角：中键旋转 · Shift+中键 平移 · 滚轮缩放"/>
+                        <Button Content="重置" Style="{StaticResource ToolButton}" Margin="6,0,0,0" Click="ResetView_Click"
+                                ToolTip="平滑过渡回全景视角"/>
+                    </UniformGrid>
+
+                    <TextBlock Text="结构操作" FontWeight="SemiBold" Margin="0,14,0,4"/>
+                    <UniformGrid Columns="2">
+                        <Button Content="绕Y轴旋转" Margin="0,0,4,4" Click="RotY_Click"/>
+                        <Button Content="绕X轴旋转" Margin="4,0,0,4" Click="RotX_Click"/>
+                        <Button Content="绕Z轴旋转" Margin="0,0,4,4" Click="RotZ_Click"/>
+                        <Button Content="X轴镜像" Margin="4,0,0,4" Click="MirrorX_Click"/>
+                        <Button Content="Z轴镜像" Margin="0,0,4,4" Click="MirrorZ_Click"/>
+                        <Button Content="复制结构" Margin="4,0,0,4" Click="CopyStruct_Click"/>
+                        <Button Content="粘贴结构" Margin="0,0,4,4" Click="PasteStruct_Click"/>
+                        <Button Content="清空" Margin="4,0,0,4" Click="ClearStruct_Click"/>
+                    </UniformGrid>
+
+                    <TextBlock Text="结构尺寸" FontWeight="SemiBold" Margin="0,14,0,4"/>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="X" VerticalAlignment="Center" Style="{StaticResource DimText}"/>
+                        <TextBox x:Name="SizeXBox" Width="44" Margin="4,0,8,0" Text="16"/>
+                        <TextBlock Text="Y" VerticalAlignment="Center" Style="{StaticResource DimText}"/>
+                        <TextBox x:Name="SizeYBox" Width="44" Margin="4,0,8,0" Text="16"/>
+                        <TextBlock Text="Z" VerticalAlignment="Center" Style="{StaticResource DimText}"/>
+                        <TextBox x:Name="SizeZBox" Width="44" Margin="4,0,0,0" Text="16"/>
+                    </StackPanel>
+                    <Button Content="应用尺寸" Margin="0,6,0,0" Click="ApplySize_Click"/>
+                </StackPanel>
+            </ScrollViewer>
+        </Border>
+
+        <!-- 中：3D 视口 -->
+        <Border Grid.Column="1" Background="{DynamicResource PanelBrush}" BorderBrush="{DynamicResource BorderBrush}"
+                BorderThickness="1" CornerRadius="8" ClipToBounds="True">
+            <DockPanel>
+                <Border DockPanel.Dock="Top" Background="{DynamicResource Panel2Brush}" Padding="10,6">
+                    <DockPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Button Content="新建" Style="{StaticResource ToolButton}" Click="NewStruct_Click"/>
+                            <Button Content="保存到结构库" Style="{StaticResource ToolButton}" Margin="6,0,0,0" Click="SaveStruct_Click"/>
+                            <Button Content="加载…" Style="{StaticResource ToolButton}" Margin="6,0,0,0" Click="LoadStruct_Click"/>
+                            <Button Content="生成放置指令" Style="{StaticResource ToolButton}" Margin="6,0,0,0" Click="GenCommand_Click"/>
+                        </StackPanel>
+                        <TextBlock x:Name="StructInfoText" DockPanel.Dock="Right" HorizontalAlignment="Right"
+                                   VerticalAlignment="Center" Style="{StaticResource DimText}"/>
+                    </DockPanel>
+                </Border>
+                <Grid Background="{DynamicResource DeepBgBrush}" MouseDown="Viewport_MouseDown" MouseMove="Viewport_MouseMove"
+                      MouseUp="Viewport_MouseUp" MouseWheel="Viewport_MouseWheel">
+                    <Viewport3D x:Name="Viewport"/>
+                </Grid>
+            </DockPanel>
+        </Border>
+
+        <!-- 右：信息 -->
+        <Border Grid.Column="2" Background="{DynamicResource PanelBrush}" BorderBrush="{DynamicResource BorderBrush}"
+                BorderThickness="1" CornerRadius="8" Padding="10" Margin="10,0,0,0">
+            <DockPanel>
+                <TextBlock Text="已用方块" FontWeight="SemiBold" DockPanel.Dock="Top"/>
+                <ListBox x:Name="UsedBlocksList" Margin="0,8,0,0" BorderThickness="1"/>
+            </DockPanel>
+        </Border>
+    </Grid>
+</UserControl>

@@ -1,0 +1,15 @@
+<Application x:Class="MCModCoder.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             StartupUri="MainWindow.xaml">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <!-- [0] 色板层：由 ThemeManager 运行时整体替换实现主题热切换，勿调整顺序 -->
+                <ResourceDictionary Source="Themes/Brushes.Dark.xaml"/>
+                <!-- [1] 控件样式层：主题无关，通过 DynamicResource 引用色板画刷 -->
+                <ResourceDictionary Source="Themes/Controls.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>
